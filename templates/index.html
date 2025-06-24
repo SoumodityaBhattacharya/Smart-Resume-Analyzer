@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Smart Resume Analyzer</title>
+        <link rel="stylesheet" href="{{ url_for('static_2', path='index.css') }}">
+    </head>
+
+
+
+    <body>
+        <div class="container">
+            <h1>-- SMART RESUME ANALYZER --</h1>
+            <img src="/static/logo.png" alt="App Logo" />
+            <h2>Upload a PDF or DOCX</h2>
+            <form action="/analyze-resume" enctype="multipart/form-data" method="post">
+                <input name="file" type="file" accept=".pdf,.docx" required>
+                <br>
+                <input type="submit" value="Analyze">
+            </form>
+        </div>
+    </body>
+</html>

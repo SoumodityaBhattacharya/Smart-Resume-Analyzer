@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Resume Result</title>
+        <link rel="stylesheet" href="{{ url_for('static_2', path='result.css') }}">
+
+    </head>
+    <body style="color: white; background-color: black;">
+        <hr><h2 style="color:rgb(88, 247, 130); text-align:center"> Resume Analysis Result </h2><hr>
+        
+        {% if filename %}
+        <iframe src="/pdfs/{{ filename }}" width="100%" height="600px"></iframe>
+        {% endif %}
+
+        <h2><u>Extracted Details:</u></h2>
+        <ul>
+            <li><strong>Name:</strong> {{ details.name }}</li>
+            <li><strong>Email:</strong> {{ details.email }}</li>
+            <li><strong>Phone:</strong> {{ details.phone }}</li>
+            <li><strong>Skills that you have:</strong></li>
+            <div class="skills-container">
+                {% for skill in details.skills %}
+                    <div class="skill-tag">
+                        {{ skill }}
+                    </div>
+                {% endfor %}
+            </div>
+        </ul>
+
+        <h2><u>Resume Score:</u></h2>
+        <div class="progress-container">
+            <div class="progress-bar" style="width: {{ Score['Score'] }}%;">
+                
+            </div>
+        </div>
+        <!-- Box 1: Resume Writing Score -->
+        <div class="score-box">
+            <p><strong>Your Resume Writing Score:</strong> {{ Score['Score'] }}</p>
+        </div>
+
+        <!-- Box 2: Note -->
+        <div class="note-box">
+            <p> <strong>Note:</strong> This score is calculated based on the content that you have added in your resume.</p>
+        </div>
+
+
+        <h3><u>Tips for Your Resume 💡:</u></h3>
+        <div style="line-height: 1.5;">
+            {% for level, message in Score['Tips'] %}
+                <div class="tip-{{ level }}">{{ message }}</div>
+            {% endfor %}
+        </div>
+
+        <h3><u>Recommended Courses:</u></h3>
+        <h4>Choose Number of Course Recommendations:</h4>
+        <input type="range" id="courseSlider" min="1" max="17" value="4" oninput="updateCourseLimit(this.value)">
+        <span id="sliderValue">4</span>
+
+        <ol id="courseList">
+            <!-- {% set course_index = 0 %} -->
+            {% for skill, courses in details.recommended_courses.items() %}
+                <li><strong>{{ skill.title() }}:</strong>
+                    <ul>
+                        {% for course in courses %}
+                            <li class="course-item">
+                                <a href="{{ course[1] }}" target="_blank">{{ course[0] }}</a>
+                            </li>
+                            <!-- {% set course_index = course_index %} -->
+                        {% endfor %}
+                    </ul>
+            {% endfor %}
+                
+        </ol>
+
+
+        <h3><u>Bonus Videos for Resume Writing Tips💡:</u></h3>
+        {% if res_video_link %}
+            <div style="text-align: center; margin-bottom: 20px;">
+                <p><strong>✅{{ res_video_title }}</strong></p>
+                <iframe width="560" height="315"
+                        src="https://www.youtube.com/embed/{{ res_video_link.split('v=')[-1].split('&')[0] }}"
+                        title="YouTube video"
+                        frameborder="0"
+                        allowfullscreen></iframe>
+            </div>
+        {% endif %}
+
+        <h3><u>Bonus Video for Interview👨‍💼 Tips💡:</u></h3>
+        {% if interview_video_link %}
+            <div style="text-align: center; margin-bottom: 20px;">
+                <p><strong>✅{{ interview_video_title }}</strong></p>
+                <iframe width="560" height="315"
+                        src="https://www.youtube.com/embed/{{ interview_video_link.split('v=')[-1].split('&')[0] }}"
+                        title="YouTube video"
+                        frameborder="0"
+                        allowfullscreen></iframe>
+            </div>
+        {% endif %}
+
+
+        <h4 style="text-align: center;"><p><a href="/">Upload another file</a></p></h4>
+
+        <script>
+            function updateCourseLimit(limit) {
+                document.getElementById("sliderValue").innerText = limit;
+
+                const allCourses = document.querySelectorAll(".course-item");
+                let visibleCount = 0;
+
+                allCourses.forEach((item) => {
+                    if (visibleCount < limit) {
+                        item.style.display = "list-item";
+                        visibleCount++;
+                    } else {
+                        item.style.display = "none";
+                    }
+                });
+
+                // Hide skill headers if all their courses are hidden
+                const skillBlocks = document.querySelectorAll("#courseList > li");
+                skillBlocks.forEach(skillBlock => {
+                    const courseItems = skillBlock.querySelectorAll(".course-item");
+                    let anyVisible = false;
+                    courseItems.forEach(ci => {
+                        if (ci.style.display !== "none") {
+                            anyVisible = true;
+                        }
+                    });
+                    skillBlock.style.display = anyVisible ? "list-item" : "none";
+                });
+            }
+
+            // Auto-call when page loads
+            window.onload = () => {
+                const slider = document.getElementById("courseSlider");
+                updateCourseLimit(slider.value);
+            };
+        </script>
+
+
+    </body>
+</html>
